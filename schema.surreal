@@ -1,0 +1,83 @@
+BEGIN TRANSACTION;
+
+REMOVE TABLE orders;
+
+--------------------------------
+-- TABLE: Category
+--------------------------------
+
+REMOVE TABLE Category;
+DEFINE TABLE Category SCHEMALESS;
+
+DEFINE FIELD name       ON TABLE Category TYPE string          ASSERT $value != NONE;
+DEFINE FIELD products   ON TABLE Category TYPE array           VALUE  $value OR [];
+DEFINE FIELD products.* ON TABLE Category TYPE record(Product) ASSERT $value != NONE;
+
+DEFINE INDEX CategoryName ON TABLE Category COLUMNS name UNIQUE;
+
+--------------------------------
+-- TABLE: Client
+--------------------------------
+
+REMOVE TABLE Client;
+DEFINE TABLE Client SCHEMAFULL;
+
+DEFINE FIELD name         ON TABLE Client TYPE string   ASSERT $value != NONE;
+DEFINE FIELD email        ON TABLE Client TYPE string   ASSERT $value != NONE AND is::email($value);
+DEFINE FIELD registerDate ON TABLE Client TYPE datetime VALUE  $value OR time::now();
+
+DEFINE INDEX ClinetEmail ON TABLE Client COLUMNS email UNIQUE;
+
+--------------------------------
+-- TABLE: Log
+--------------------------------
+
+REMOVE TABLE Log;
+DEFINE TABLE Log SCHEMAFULL; 
+
+DEFINE FIELD order_     ON TABLE Log TYPE record(orders) ASSERT $value != NONE;
+DEFINE FIELD dueUntil   ON TABLE Log TYPE datetime       ASSERT $value != NONE;
+DEFINE FIELD createDate ON TABLE Log TYPE datetime       VALUE  $value OR time::now();
+
+--------------------------------
+-- TABLE: Product
+--------------------------------
+
+REMOVE TABLE Product;
+DEFINE TABLE Product SCHEMAFULL;
+
+DEFINE FIELD name         ON TABLE Product TYPE string           ASSERT $value != NONE;
+DEFINE FIELD brand        ON TABLE Product TYPE string           ASSERT $value != NONE;
+DEFINE FIELD categories   ON TABLE Product TYPE array            VALUE  $value OR [];
+DEFINE FIELD categories.* ON TABLE Product TYPE record(Category) ASSERT $value != NONE;
+DEFINE FIELD price        ON TABLE Product TYPE decimal          ASSERT $value != NONE AND $value > 0;
+DEFINE FIELD quantity     ON TABLE Product TYPE int              ASSERT $value != NONE AND $value > 0;
+DEFINE FIELD createDate   ON TABLE Product TYPE datetime         VALUE  $value OR time::now();
+DEFINE FIELD modifyDate   ON TABLE Product TYPE datetime         VALUE  time::now();
+
+DEFINE INDEX ProductBrand ON TABLE Product COLUMNS name, brand UNIQUE;
+
+--------------------------------
+-- dummy data
+--------------------------------
+
+LET $client1 = (CREATE Client CONTENT { name: "name1", email: "email1@example.com" });
+LET $client2 = (CREATE Client CONTENT { name: "name2", email: "email2@example.com" });
+
+LET $product1 = (CREATE Product CONTENT {name: "name1", brand: "brand1", categories: null, price:  69, quantity: 1 });
+LET $product2 = (CREATE Product CONTENT {name: "name2", brand: "brand1", categories: null, price: 420, quantity: 1 });
+LET $product3 = (CREATE Product CONTENT {name: "name1", brand: "brand2", categories: null, price:  70, quantity: 1 });
+LET $product4 = (CREATE Product CONTENT {name: "name2", brand: "brand2", categories: null, price: 421, quantity: 1 });
+
+RELATE $client1->orders->$product1;
+RELATE $client1->orders->$product2;
+RELATE $client2->orders->$product3;
+RELATE $client2->orders->$product4;
+
+LET $order1 = (SELECT * FROM orders)[0];
+LET $order2 = (SELECT * FROM orders)[1];
+
+CREATE Log CONTENT { order_: $order1.id, dueUntil: time::now() + 1w };
+CREATE Log CONTENT { order_: $order2.id, dueUntil: time::now() + 2w };
+
+COMMIT TRANSACTION;
