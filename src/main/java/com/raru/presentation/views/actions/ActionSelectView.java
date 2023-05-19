@@ -28,7 +28,7 @@ public class ActionSelectView extends GridView {
      * categories, clients, orders, and products.
      */
     public ActionSelectView() {
-        var label = new JLabel("Farmacia inimii CATENA!", SwingConstants.CENTER);
+        var label = new JLabel("Orders Management", SwingConstants.CENTER);
         label.setBounds(FIRST_COL, CATERINCA_ROW, COL_WIDTH, ROW_HEIGHT);
         add(label);
 

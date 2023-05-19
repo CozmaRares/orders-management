@@ -51,7 +51,7 @@ DEFINE FIELD brand        ON TABLE Product TYPE string           ASSERT $value !
 DEFINE FIELD categories   ON TABLE Product TYPE array            VALUE  $value OR [];
 DEFINE FIELD categories.* ON TABLE Product TYPE record(Category) ASSERT $value != NONE;
 DEFINE FIELD price        ON TABLE Product TYPE decimal          ASSERT $value != NONE AND $value > 0;
-DEFINE FIELD quantity     ON TABLE Product TYPE int              ASSERT $value != NONE AND $value > 0;
+DEFINE FIELD quantity     ON TABLE Product TYPE int              ASSERT $value != NONE AND $value >= 0;
 DEFINE FIELD createDate   ON TABLE Product TYPE datetime         VALUE  $value OR time::now();
 DEFINE FIELD modifyDate   ON TABLE Product TYPE datetime         VALUE  time::now();
 

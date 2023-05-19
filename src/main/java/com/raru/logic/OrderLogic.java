@@ -8,6 +8,7 @@ import com.raru.logic.validators.DurationValidator.InvalidDurationException;
 import com.raru.data.BillDAO;
 import com.raru.data.DBException;
 import com.raru.model.Order;
+import com.raru.model.Product;
 import com.raru.utils.Date;
 
 public class OrderLogic {
@@ -29,11 +30,20 @@ public class OrderLogic {
      *                                  database.
      */
     public static Order create(String clientID, String productID, String dueUntilDuration)
-            throws InvalidDurationException, DBException {
+            throws InvalidDurationException, UnderStockedException, DBException {
         DurationValidator.validate(dueUntilDuration);
+
+        Product p = ProductLogic.findUnique(productID);
+
+        if (p.getQuantity() <= 0)
+            throw new UnderStockedException(productID);
+
         Date dueUntil = BillDAO.fromDuration(dueUntilDuration);
         Order o = dao.create(new Order(clientID, productID));
         BillLogic.create(o.getId(), dueUntil);
+        p.setQuantity(p.getQuantity() - 1);
+        ProductLogic.update(p);
+
         return o;
     }
 
@@ -83,5 +93,16 @@ public class OrderLogic {
      */
     public static void delete(String id) throws DBException {
         dao.delete(id);
+    }
+
+    public static class UnderStockedException extends Exception {
+        public UnderStockedException(String message) {
+            super(message);
+        }
+
+        @Override
+        public String getMessage() {
+            return "Product with ID " + super.getMessage() + " is under stocked";
+        }
     }
 }

@@ -1,0 +1,10 @@
+com.raru
+com.raru.data
+com.raru.logic
+com.raru.logic.validators
+com.raru.model
+com.raru.presentation
+com.raru.presentation.views.actions
+com.raru.presentation.views.data
+com.raru.presentation.views.utils
+com.raru.utils
