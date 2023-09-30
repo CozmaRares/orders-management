@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.raru</groupId>
-  <artifactId>ass3</artifactId>
+  <artifactId>assignment3</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <name>ass3</name>
@@ -80,6 +80,25 @@
             <configuration>
                 <source>17</source>
             </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>3.1.0</version>
+          <executions>
+            <execution>
+              <id>default</id>
+              <configuration>
+                <mainClass>com.raru.Main</mainClass>
+              </configuration>
+            </execution>
+            <execution>
+              <id>database-schema</id>
+              <configuration>
+                <mainClass>com.raru.data.DataBase</mainClass>
+              </configuration>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>

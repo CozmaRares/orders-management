@@ -17,7 +17,7 @@ import org.json.JSONObject;
 
 import com.raru.utils.Utils;
 
-class DataBase {
+public class DataBase {
     private static HttpRequest.Builder reqBuilder;
     private static HttpClient client = HttpClient.newHttpClient();
 
@@ -42,7 +42,7 @@ class DataBase {
      * Loads the defined database schema from the specified file.
      */
     public static void main(String[] args) throws Exception {
-        Path path = Paths.get("schema.surreal");
+        Path path = Paths.get("schema.surrealql");
         String schema = String.join("\n", Files.readAllLines(path));
         System.out.println(_run(schema).toString(4));
     }
