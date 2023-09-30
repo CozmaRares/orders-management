@@ -5,6 +5,24 @@
 An application for client order management in a warehouse, utilizing SurrealDB
 as the database, offering basic CRUD functionality.
 
+## Screenshots
+
+### Main View
+
+![main view](./screenshots/main.png)
+
+### Client Actions
+
+![client actions](./screenshots/client-actions.png)
+
+### Create A Client
+
+![create client](./screenshots/create-client.png)
+
+### Display All Clients
+
+![display clients](./screenshots/display-clients.png)
+
 ## Getting Started
 
 ### Prerequisites
